@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sản phẩm | SẮC VIỆT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Styles/style.css">
+</head>
+<body>
+  <div class="top-bar">
+    <div class="container">
+      <div class="top-bar-left">
+        <span>✉ hello@sacviet.vn</span>
+        <span>Miễn phí vận chuyển đơn từ 500.000₫</span>
+      </div>
+      <div class="top-bar-right">
+        <a href="contact.html">Liên hệ</a>
+        <span>🇻🇳 Tiếng Việt</span>
+      </div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="container header-main">
+      <a href="index.html" class="logo">
+        <div class="logo-icon"><img src="https://images.pexels.com/photos/32202150/pexels-photo-32202150.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop" alt="Sắc Việt"></div>
+        <div class="logo-text">
+          <h1>SẮC VIỆT</h1>
+          <span>Tinh hoa Việt Nam</span>
+        </div>
+      </a>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="products.html" class="active">Sản phẩm</a></li>
+          <li><a href="about.html">Giới thiệu</a></li>
+          <li><a href="contact.html">Liên hệ</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html">🛒 <span class="cart-count">0</span></a>
+        <span class="cart-total">0₫</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-title">
+        <h2>Tất cả sản phẩm</h2>
+        <p>Khám phá bộ sưu tập quà lưu niệm và đặc sản Việt Nam</p>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="filter-category">Danh mục:</label>
+          <select id="filter-category">
+            <option value="all">Tất cả sản phẩm</option>
+            <option value="qua-luu-niem">Quà lưu niệm</option>
+            <option value="thu-cong">Thủ công mỹ nghệ</option>
+            <option value="dac-san">Đặc sản Việt Nam</option>
+            <option value="set-qua-trang-trong">Các set quà trang trọng</option>
+          </select>
+        </div>
+        <div class="search-box">
+          <input type="text" id="search-input" placeholder="Tìm kiếm sản phẩm...">
+          <button type="button" onclick="applyFilters()" aria-label="Tìm kiếm">🔍</button>
+        </div>
+      </div>
+
+      <div class="products-grid" id="products-list">
+        <!-- Rendered by JS -->
+      </div>
+
+      <p id="no-results" class="text-center hidden" style="padding: 40px; color: var(--text-muted);">
+        Không tìm thấy sản phẩm phù hợp.
+      </p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>SẮC VIỆT</h4>
+          <p>Gói trọn tinh hoa Việt – Trao gửi yêu thương.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Danh mục</h4>
+          <ul>
+            <li><a href="products.html?category=qua-luu-niem">Quà lưu niệm</a></li>
+            <li><a href="products.html?category=thu-cong">Thủ công mỹ nghệ</a></li>
+            <li><a href="products.html?category=dac-san">Đặc sản Việt Nam</a></li>
+            <li><a href="products.html?category=set-qua-trang-trong">Các set quà trang trọng</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Hỗ trợ</h4>
+          <ul>
+            <li><a href="about.html">Về chúng tôi</a></li>
+            <li><a href="contact.html">Liên hệ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Liên hệ</h4>
+          <p>📍 123 Đường Văn Hóa, Quận 1, TP.HCM</p>
+          <p>📞 0901 234 567</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Sắc Việt. Dự án bài tập – 6651071080.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="Scripts/products-data.js"></script>
+  <script src="Scripts/main.js"></script>
+  <script>
+    function applyFilters() {
+      const categoryEl = document.getElementById('filter-category');
+      const searchEl = document.getElementById('search-input');
+      const category = categoryEl ? categoryEl.value : 'all';
+      const search = searchEl ? searchEl.value : '';
+
+      const filtered = filterProducts({ category, search });
+      const listEl = document.getElementById('products-list');
+      const noRes = document.getElementById('no-results');
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = '';
+        noRes.classList.remove('hidden');
+      } else {
+        noRes.classList.add('hidden');
+        listEl.innerHTML = filtered.map(renderProductCard).join('');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Read URL params
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('category')) {
+        const catSelect = document.getElementById('filter-category');
+        if (catSelect) {
+          catSelect.value = params.get('category');
+        }
+      }
+
+      applyFilters();
+
+      // Event listeners
+      const catSelect = document.getElementById('filter-category');
+      if (catSelect) {
+        catSelect.addEventListener('change', applyFilters);
+      }
+      
+      const searchInput = document.getElementById('search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+        searchInput.addEventListener('keyup', (e) => {
+          if (e.key === 'Enter') applyFilters();
+        });
+      }
+    });
+  </script>
+</body>
+</html>

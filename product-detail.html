@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết sản phẩm | SẮC VIỆT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Styles/style.css">
+</head>
+<body>
+  <div class="top-bar">
+    <div class="container">
+      <div class="top-bar-left"><span>✉ hello@sacviet.vn</span></div>
+      <div class="top-bar-right"><a href="contact.html">Liên hệ</a></div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="container header-main">
+      <a href="index.html" class="logo">
+        <div class="logo-icon"><img src="https://images.pexels.com/photos/32202150/pexels-photo-32202150.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop" alt="Sắc Việt"></div>
+        <div class="logo-text"><h1>SẮC VIỆT</h1><span>Tinh hoa Việt Nam</span></div>
+      </a>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="products.html" class="active">Sản phẩm</a></li>
+          <li><a href="about.html">Giới thiệu</a></li>
+          <li><a href="contact.html">Liên hệ</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html">🛒 <span class="cart-count">0</span></a>
+        <span class="cart-total">0₫</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div id="product-detail" class="product-detail">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="section-title" style="margin-top: 50px;">
+        <h2>Sản phẩm liên quan</h2>
+      </div>
+      <div class="products-grid" id="related-products"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2025 Sắc Việt. Dự án bài tập – 6651071080.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="Scripts/products-data.js"></script>
+  <script src="Scripts/main.js"></script>
+  <script>
+    let currentQty = 1;
+
+    function changeQty(delta) {
+      currentQty = Math.max(1, currentQty + delta);
+      document.getElementById('qty-input').value = currentQty;
+    }
+
+    function addToCartDetail(id) {
+      Cart.add(id, currentQty);
+    }
+
+    function changeMainImage(thumb) {
+      const mainImg = document.getElementById('main-product-img');
+      if (mainImg && thumb.dataset.src) {
+        mainImg.src = thumb.dataset.src;
+        document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const product = getProductById(id);
+
+      const detailEl = document.getElementById('product-detail');
+
+      if (!product) {
+        detailEl.innerHTML = '<p class="text-center">Không tìm thấy sản phẩm. <a href="products.html">Quay lại danh sách</a></p>';
+        return;
+      }
+
+      document.title = product.name + ' | SẮC VIỆT';
+
+      const stockStatus = product.stock > 0 
+        ? `<span style="color: var(--accent);">Còn hàng (${product.stock})</span>` 
+        : `<span style="color: var(--primary);">Hết hàng</span>`;
+
+      const imgList = (product.images && product.images.length) ? product.images : [product.image];
+      const mainImg = imgList[0];
+      const thumbsHtml = imgList.map((src, idx) => 
+        `<img src="${src}" alt="${product.name} ${idx+1}" class="gallery-thumb ${idx===0?'active':''}" data-src="${src}" onclick="changeMainImage(this)">`
+      ).join('');
+
+      detailEl.innerHTML = `
+        <div class="detail-gallery">
+          <div class="main-image-wrap" onclick="openProductModal('${product.id}')" style="cursor: pointer;" title="Nhấn để xem ảnh lớn">
+            <img id="main-product-img" src="${mainImg}" alt="${product.name}" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'400\\' height=\\'400\\' viewBox=\\'0 0 400 400\\'%3E%3Crect fill=\\'%23f3ece2\\' width=\\'400\\' height=\\'400\\'/%3E%3Ctext fill=\\'%238c827a\\' font-family=\\'sans-serif\\' font-size=\\'18\\' text-anchor=\\'middle\\' x=\\'200\\' y=\\'205\\'%3EChưa có hình ảnh%3C/text%3E%3C/svg%3E';">
+          </div>
+          <div class="gallery-thumbs">
+            ${thumbsHtml}
+          </div>
+        </div>
+        <div class="detail-info">
+          <h1 onclick="openProductModal('${product.id}')" style="cursor: pointer;" class="product-name-link" title="Nhấn để xem ảnh lớn">${product.name}</h1>
+          <div class="detail-meta">
+            <span>Mã: <strong>${product.id}</strong></span>
+            <span>Danh mục: ${categoryLabels[product.category] || product.category}</span>
+            <span>Vùng: ${regionLabels[product.region] || product.region}</span>
+          </div>
+          <div class="detail-price">${formatPrice(product.price)}</div>
+          <p class="detail-desc">${product.description}</p>
+          <p><strong>Xuất xứ:</strong> ${product.origin}</p>
+          <p><strong>Tình trạng:</strong> ${stockStatus}</p>
+          
+          <div class="qty-selector">
+            <span>Số lượng:</span>
+            <button onclick="changeQty(-1)">−</button>
+            <input type="number" id="qty-input" value="1" min="1" readonly>
+            <button onclick="changeQty(1)">+</button>
+          </div>
+
+          <div class="detail-actions">
+            <button class="btn btn-primary" onclick="addToCartDetail('${product.id}')" ${product.stock <= 0 ? 'disabled' : ''}>
+              Thêm vào giỏ hàng
+            </button>
+            <a href="products.html" class="btn btn-outline">Tiếp tục mua sắm</a>
+          </div>
+        </div>
+      `;
+
+
+      // Related products (same category)
+      const related = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+      document.getElementById('related-products').innerHTML = related.map(renderProductCard).join('');
+    });
+  </script>
+</body>
+</html>
